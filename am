@@ -21,7 +21,8 @@ file=$(ls -t *.mbox.gz | head -n1)
 # decompress
 gzip -d $file
 
-file=$download_dir
-file+=$(ls -t *.mbox | head -n1)
+ls -t *.mbox --width=1
+# file=$download_dir
+# file+=$(ls -t *.mbox | head -n1)
 
-git -C $git_dir am $file
+# git -C $git_dir am $file
