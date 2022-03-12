@@ -1,28 +1,33 @@
 #!/bin/bash
 
-mbox_gz_link=$1
+download_decompress () {
+    mbox_gz_link=$1
 
-git_dir=$(pwd)
-download_dir=$HOME/downloads/
+    git_dir=$(pwd)
+    download_dir=$HOME/downloads/
 
-if test -d $download_dir
+    if test -d $download_dir
+    then
+        cd $download_dir
+    else
+        mkdir $download_dir
+        cd $download_dir
+    fi
+
+    # retrieve the mbox.gz file
+    if curl --remote-name --remote-header-name --no-progress-meter \
+        $mbox_gz_link >/dev/null
+    then
+        file=$(ls -t *.mbox.gz | head -n1)
+        # decompress
+        gzip -d $file
+        ls -t *.mbox --width=1 | head -n1
+    fi
+}
+
+if test $# -gt 1 -o $# -eq 0
 then
-    cd $download_dir
+    echo "usage: am <mbox.gz_URL>"
 else
-    mkdir $download_dir
-    cd $download_dir
+    download_decompress $1
 fi
-
-# retrieve the mbox.gz file
-curl --remote-name --remote-header-name $mbox_gz_link
-
-file=$(ls -t *.mbox.gz | head -n1)
-
-# decompress
-gzip -d $file
-
-ls -t *.mbox --width=1
-# file=$download_dir
-# file+=$(ls -t *.mbox | head -n1)
-
-# git -C $git_dir am $file
