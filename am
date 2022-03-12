@@ -1,0 +1,27 @@
+#!/bin/bash
+
+mbox_gz_link=$1
+
+git_dir=$(pwd)
+download_dir=$HOME/downloads/
+
+if test -d $download_dir
+then
+    cd $download_dir
+else
+    mkdir $download_dir
+    cd $download_dir
+fi
+
+# retrieve the mbox.gz file
+curl --remote-name --remote-header-name $mbox_gz_link
+
+file=$(ls -t *.mbox.gz | head -n1)
+
+# decompress
+gzip -d $file
+
+file=$download_dir
+file+=$(ls -t *.mbox | head -n1)
+
+git -C $git_dir am $file
